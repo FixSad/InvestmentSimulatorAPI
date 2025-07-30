@@ -5,9 +5,9 @@ namespace InvestmentSimulatorAPI.Models
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<FavoutitesModel> favoutites { get; set; }
-        public DbSet<PortfolioModel> portfolio { get; set; }
-        public DbSet<TransactionModel> transactions { get; set; }
+        public DbSet<FavoutitesModel> Favourites { get; set; }
+        public DbSet<PortfolioModel> Portfolio { get; set; }
+        public DbSet<TransactionModel> Transactions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
