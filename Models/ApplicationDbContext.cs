@@ -5,7 +5,7 @@ namespace InvestmentSimulatorAPI.Models
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<FavoutitesModel> Favourites { get; set; }
+        public DbSet<FavouritesModel> Favourites { get; set; }
         public DbSet<PortfolioModel> Portfolio { get; set; }
         public DbSet<TransactionModel> Transactions { get; set; }
 
