@@ -1,0 +1,43 @@
+using InvestmentSimulatorAPI.Models.Database;
+using InvestmentSimulatorAPI.Interfaces;
+using InvestmentSimulatorAPI.Models;
+
+namespace InvestmentSimulatorAPI.Repositories
+{
+    public class FavouriteRepository : IBaseRepository<FavouritesModel>
+    {
+        private ApplicationDbContext _dbContext;
+        public FavouriteRepository(ApplicationDbContext dbContext) => _dbContext = dbContext;
+
+        public async Task Create(FavouritesModel entity)
+        {
+            try
+            {
+                await _dbContext.Favourites.AddAsync(entity);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"[ERR] Ошибка при создании избранного: {ex}");
+            }
+        }
+
+        public async Task Delete(FavouritesModel entity)
+        {
+            try
+            {
+                _dbContext.Favourites.Remove(entity);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"[ERR] Ошибка при удалении избранного: {ex}");
+            }
+        }
+
+        public IQueryable<FavouritesModel> GetAll()
+        {
+            return _dbContext.Favourites;
+        }
+    }
+}
