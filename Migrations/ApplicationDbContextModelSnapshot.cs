@@ -17,7 +17,7 @@ namespace InvestmentSimulatorAPI.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
 
-            modelBuilder.Entity("InvestmentSimulatorAPI.Models.Database.FavoutitesModel", b =>
+            modelBuilder.Entity("InvestmentSimulatorAPI.Models.Database.FavouritesModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,7 +29,7 @@ namespace InvestmentSimulatorAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("favoutites");
+                    b.ToTable("Favourites");
                 });
 
             modelBuilder.Entity("InvestmentSimulatorAPI.Models.Database.PortfolioModel", b =>
@@ -47,7 +47,7 @@ namespace InvestmentSimulatorAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("portfolio");
+                    b.ToTable("Portfolio");
                 });
 
             modelBuilder.Entity("InvestmentSimulatorAPI.Models.Database.TransactionModel", b =>
@@ -75,7 +75,7 @@ namespace InvestmentSimulatorAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("transactions");
+                    b.ToTable("Transactions");
                 });
 #pragma warning restore 612, 618
         }

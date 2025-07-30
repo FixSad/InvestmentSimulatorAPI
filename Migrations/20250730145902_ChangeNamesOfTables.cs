@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace InvestmentSimulatorAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ChangeNamesOfTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "favoutites",
+                name: "Favourites",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -21,11 +21,11 @@ namespace InvestmentSimulatorAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_favoutites", x => x.Id);
+                    table.PrimaryKey("PK_Favourites", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "portfolio",
+                name: "Portfolio",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -35,11 +35,11 @@ namespace InvestmentSimulatorAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_portfolio", x => x.Id);
+                    table.PrimaryKey("PK_Portfolio", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "transactions",
+                name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -52,7 +52,7 @@ namespace InvestmentSimulatorAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_transactions", x => x.Id);
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
                 });
         }
 
@@ -60,13 +60,13 @@ namespace InvestmentSimulatorAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "favoutites");
+                name: "Favourites");
 
             migrationBuilder.DropTable(
-                name: "portfolio");
+                name: "Portfolio");
 
             migrationBuilder.DropTable(
-                name: "transactions");
+                name: "Transactions");
         }
     }
 }
