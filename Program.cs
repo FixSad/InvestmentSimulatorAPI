@@ -11,9 +11,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ApplicationDbContext>();
 
-
 builder.Services.AddScoped<FavouriteRepository>();
 builder.Services.AddScoped<FavouriteService>();
+
+builder.Services.AddScoped<PortfolioRepository>();
+builder.Services.AddScoped<PortfolioService>();
+
+builder.Services.AddScoped<TransactionRepository>();
+builder.Services.AddScoped<TransactionService>();
 
 var app = builder.Build();
 
