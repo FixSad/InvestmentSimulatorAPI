@@ -12,11 +12,17 @@ namespace InvestmentSimulatorAPI.Controllers
     {
         private PortfolioRepository _repository;
         private PortfolioService _service;
+        private readonly ILogger<PortfolioController> _logger;
+        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
+        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
+        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
 
-        public PortfolioController(PortfolioRepository repository, PortfolioService service)
+        public PortfolioController(PortfolioRepository repository, PortfolioService service,
+                                   ILogger<PortfolioController> logger)
         {
             _repository = repository;
             _service = service;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -31,11 +37,19 @@ namespace InvestmentSimulatorAPI.Controllers
                 };
                 await _repository.Create(portfolio);
 
-                return Ok(new { description = "Портфолио успешно создано" });
+                _logger.LogInformation(
+                    $@"{SUCCESS} Портфолио с данными Symbol -
+                     {model.Symbol}, Quantity - {model.Quantity} успешно создано"
+                );                
+            return Ok(new { description = "Портфолио успешно создано" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { description = $"Ошибка при создании портфолио: {ex}" });
+                _logger.LogError(
+                    $@"{ERROR} Ошибка при создании портфолио с данными Symbol -
+                     {model.Symbol}, Quantity - {model.Quantity}: {ex.Message}"
+                );    
+                return BadRequest(new { description = $"Ошибка при создании портфолио" });
             }
         }
 
@@ -48,19 +62,25 @@ namespace InvestmentSimulatorAPI.Controllers
                 var findedPortfolio = await _service.GetPortfolioById(id);
 
                 if (findedPortfolio is null)
+                {
+                    _logger.LogWarning($"{WARNING} Портфолио с ID {id} не было найдено");
                     return BadRequest(new { description = "Ошибка при удалении портфолио" });
+                }
 
                 await _repository.Delete(findedPortfolio);
 
+                _logger.LogInformation($"{SUCCESS} Портфолио с ID {id} успешно удалено");
                 return Ok(new { description = "Портфолио успешно удалено" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { description = $"Ошибка при удалении портфолио: {ex}" });
+                _logger.LogError($"{ERROR} Ошибка при удалении портфолио с ID {id}: {ex.Message}");
+                return BadRequest(new { description = $"Ошибка при удалении портфолио: {ex.Message}" });
             }
         }
 
         [HttpGet]
+        [Route("all")]
         public async Task<ActionResult<IEnumerable<PortfolioModel>>> GetAllPortfolio()
         {
             try
@@ -70,11 +90,34 @@ namespace InvestmentSimulatorAPI.Controllers
                 if (portfolio == null || !portfolio.Any())
                     return NoContent();
 
+                _logger.LogInformation($"{SUCCESS} Список портфолио успешно получен");
                 return Ok(portfolio);
             }
             catch (Exception ex)
             {
+                _logger.LogError($"{ERROR} Ошибка при получении списка портфолио: {ex.Message}");
                 return BadRequest(new { description = $"Ошибка при получении списка портфолио: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetPortfolio(string id)
+        {
+            try
+            {
+                var portfolio = await _service.GetPortfolioById(id);
+
+                if (portfolio == null)
+                    return NoContent();
+
+                _logger.LogInformation($"{SUCCESS} Портфолио с ID {id} успешно получен");
+                return Ok(portfolio);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ERROR} Ошибка при получении портфолио с ID {id}: {ex.Message}");
+                return BadRequest(new { description = $"Ошибка при получении портфолио с ID {id}: {ex.Message}" });
             }
         }
     }
