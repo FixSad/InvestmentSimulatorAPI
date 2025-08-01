@@ -9,16 +9,30 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ApplicationDbContext>();
+#region Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+#endregion
 
+#region SQLITE
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlite("Data Source=investment.db"));
+#endregion
+
+#region Favourite 
 builder.Services.AddScoped<FavouriteRepository>();
 builder.Services.AddScoped<FavouriteService>();
+#endregion
 
+#region Portfolio
 builder.Services.AddScoped<PortfolioRepository>();
 builder.Services.AddScoped<PortfolioService>();
+#endregion
 
+#region Transaction
 builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<TransactionService>();
+#endregion
 
 var app = builder.Build();
 
