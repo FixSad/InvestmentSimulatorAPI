@@ -23,7 +23,7 @@ namespace InvestmentSimulatorAPI.Services
 
                 if (findedPortfolio is null)
                 {
-                    return null;
+                    throw new KeyNotFoundException($"Портфолио с ID {id} не найдено");
                 }
 
                 return findedPortfolio;

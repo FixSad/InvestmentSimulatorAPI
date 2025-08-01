@@ -6,7 +6,7 @@ namespace InvestmentSimulatorAPI.Services
 {
     public class FavouriteService
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public FavouriteService(ApplicationDbContext context) => _context = context;
 
@@ -16,15 +16,15 @@ namespace InvestmentSimulatorAPI.Services
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    throw new ArgumentException("Идентификатор не может быть пустым.", nameof(id));
+                    throw new ArgumentException("Идентификатор не может быть пустым", nameof(id));
                 }
 
                 var findedFavourite = await _context.Favourites.SingleOrDefaultAsync(f => f.Id.ToString() == id);
 
                 if (findedFavourite is null)
                 {
-                    return null;
-                }
+                    throw new KeyNotFoundException($"Избранное с ID {id} не найдено");
+                } 
 
                 return findedFavourite;
             }

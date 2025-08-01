@@ -23,7 +23,7 @@ namespace InvestmentSimulatorAPI.Services
 
                 if (findedTransaction is null)
                 {
-                    return null;
+                    throw new KeyNotFoundException($"Транзакция с ID {id} не найдено");
                 }
 
                 return findedTransaction;
