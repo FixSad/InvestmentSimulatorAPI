@@ -9,9 +9,7 @@ namespace InvestmentSimulatorAPI.Models
         public DbSet<PortfolioModel> Portfolio { get; set; }
         public DbSet<TransactionModel> Transactions { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source = investment.db");
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options) { }
     }
 }
