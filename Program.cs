@@ -19,7 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite("Data Source=investment.db"));
 #endregion
 
-#region Favourite 
+#region Favourite
 builder.Services.AddScoped<FavouriteRepository>();
 builder.Services.AddScoped<FavouriteService>();
 #endregion
@@ -34,6 +34,18 @@ builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<TransactionService>();
 #endregion
 
+#region Cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+#endregion
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -41,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
 
