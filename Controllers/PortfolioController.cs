@@ -3,12 +3,13 @@ using InvestmentSimulatorAPI.Repositories;
 using InvestmentSimulatorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using InvestmentSimulatorAPI.Attributes;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/portfolio")]
     [ApiController]
-    public class PortfolioController : ControllerBase
+    public class PortfolioController : BaseController
     {
         private PortfolioRepository _repository;
         private PortfolioService _service;
@@ -30,10 +31,13 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var portfolio = new PortfolioModel()
                 {
                     Symbol = model.Symbol,
-                    Quantity = model.Quantity
+                    Quantity = model.Quantity,
+                    UserId = userId
                 };
                 await _repository.Create(portfolio);
 
@@ -59,6 +63,8 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var findedPortfolio = await _service.GetPortfolioById(id);
 
                 if (findedPortfolio is null)
@@ -80,6 +86,7 @@ namespace InvestmentSimulatorAPI.Controllers
         }
 
         [HttpGet]
+        [AdminOnly]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<PortfolioModel>>> GetAllPortfolio()
         {

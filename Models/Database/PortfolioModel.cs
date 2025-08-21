@@ -8,5 +8,8 @@ namespace InvestmentSimulatorAPI.Models.Database
         public int Id { get; set; }
         public required string Symbol { get; set; }
         public float Quantity { get; set; }
+
+        public int UserId { get; set; }
+        public UserModel User { get; set; } = null!;
     }
 }

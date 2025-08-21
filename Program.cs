@@ -2,12 +2,60 @@ using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Services;
 using InvestmentSimulatorAPI.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+#region AUTH
+builder.Services.AddScoped<AuthRepository>();
+builder.Services.AddScoped<AuthService>();
+#endregion
+
+#region JWT
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("JWT Key отсутствует в конфигурации");
+}
+
+if (string.IsNullOrEmpty(jwtIssuer))
+{
+    throw new InvalidOperationException("JWT Issuer отсутствует в конфигурации");
+}
+
+if (string.IsNullOrEmpty(jwtAudience))
+{
+    throw new InvalidOperationException("JWT Audience отсутствует в конфигурации");
+}
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+#endregion
 
 #region Logging
 builder.Logging.ClearProviders();

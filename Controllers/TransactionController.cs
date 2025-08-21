@@ -3,12 +3,13 @@ using InvestmentSimulatorAPI.Repositories;
 using InvestmentSimulatorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using InvestmentSimulatorAPI.Attributes;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/transaction")]
     [ApiController]
-    public class TransactionController : ControllerBase
+    public class TransactionController : BaseController
     {
         private TransactionRepository _repository;
         private TransactionService _service;
@@ -30,13 +31,16 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var transaction = new TransactionModel()
                 {
                     Symbol = model.Symbol,
                     Quantity = model.Quantity,
                     Type = model.Type,
                     Price = model.Price,
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTime.UtcNow,
+                    UserId = userId
                 };
                 await _repository.Create(transaction);
 
@@ -62,6 +66,8 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 TransactionModel findedTransaction = await _service.GetTransactionById(id);
 
                 if (findedTransaction is null)
@@ -83,6 +89,7 @@ namespace InvestmentSimulatorAPI.Controllers
         }
 
         [HttpGet]
+        [AdminOnly]
         [Route("all")]
         public async Task<ActionResult<IEnumerable<TransactionModel>>> GetAllTransactions()
         {
@@ -109,6 +116,8 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 TransactionModel transaction = await _service.GetTransactionById(id);
 
                 if (transaction == null)

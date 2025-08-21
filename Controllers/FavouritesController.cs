@@ -1,15 +1,17 @@
+using System.Security.Claims;
 using InvestmentSimulatorAPI.Models.Database;
 using InvestmentSimulatorAPI.Repositories;
 using InvestmentSimulatorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using InvestmentSimulatorAPI.Attributes;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/favourite")]
     [ApiController]
-    public class FavouriteController : ControllerBase
+    public class FavouriteController : BaseController
     {
         private FavouriteRepository _repository;
         private FavouriteService _service;
@@ -31,9 +33,12 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var favourite = new FavouritesModel()
                 {
-                    Symbol = model.Symbol
+                    Symbol = model.Symbol,
+                    UserId = userId
                 };
                 await _repository.Create(favourite);
 
@@ -53,6 +58,8 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var findedFavourite = await _service.GetFavouriteById(id);
 
                 if (findedFavourite is null)
@@ -74,8 +81,32 @@ namespace InvestmentSimulatorAPI.Controllers
         }
 
         [HttpGet]
-        [Route("all")]
+        [Route("user/all")]
         public async Task<ActionResult<IEnumerable<FavouritesModel>>> GetAllFavourites()
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+
+                var favourites = await _repository.GetAllByUserIdAsync(userId).ToListAsync();
+
+                if (favourites == null || !favourites.Any())
+                    return NoContent();
+
+                _logger.LogInformation($"{SUCCESS} Список избранного пользователя {userId} успешно получен");
+                return Ok(favourites);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ERROR} Ошибка при получении списка избранного: {ex.Message}");
+                return BadRequest(new { description = $"Ошибка при получении списка избранных" });
+            }
+        }
+
+        [HttpGet]
+        [AdminOnly]
+        [Route("all")]
+        public async Task<ActionResult<IEnumerable<FavouritesModel>>> GetAllUserFavourites()
         {
             try
             {
@@ -100,6 +131,8 @@ namespace InvestmentSimulatorAPI.Controllers
         {
             try
             {
+                var userId = GetCurrentUserId();
+
                 var favourite = await _service.GetFavouriteById(id);
 
                 if (favourite == null)

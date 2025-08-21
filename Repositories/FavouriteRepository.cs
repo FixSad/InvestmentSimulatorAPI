@@ -39,5 +39,10 @@ namespace InvestmentSimulatorAPI.Repositories
         {
             return _dbContext.Favourites;
         }
+
+        public IQueryable<FavouritesModel> GetAllByUserIdAsync(int userId)
+        {
+            return _dbContext.Favourites.Where(f => f.UserId == userId);
+        }
     }
 }
