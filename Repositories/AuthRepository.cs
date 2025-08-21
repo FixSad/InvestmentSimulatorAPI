@@ -44,7 +44,11 @@ namespace InvestmentSimulatorAPI.Repositories
         
         public async Task<UserModel?> GetUserById(int userId)
         {
-            return await _context.Users.Where(f => f.Id == userId).FirstOrDefaultAsync();
+            return await _context.Users
+                .Include(u => u.Transactions) 
+                .Include(u => u.Portfolios)
+                .Include(u => u.Favourites)
+                .FirstOrDefaultAsync(u => u.Id == userId);
         }
     }
 }

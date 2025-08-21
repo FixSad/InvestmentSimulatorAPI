@@ -18,8 +18,8 @@ namespace InvestmentSimulatorAPI.Models.Database
 
         public bool IsAdmin { get; set; } = false;
 
-        public ICollection<TransactionModel> Transactions { get; set; } = null!;
-        public ICollection<PortfolioModel> Portfolios { get; set; } = null!;
-        public ICollection<FavouritesModel> Favourites { get; set; } = null!;
+        public ICollection<TransactionModel>? Transactions { get; set; }
+        public ICollection<PortfolioModel>? Portfolios { get; set; }
+        public ICollection<FavouritesModel>? Favourites { get; set; } 
     }
 }

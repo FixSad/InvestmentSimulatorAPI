@@ -57,6 +57,12 @@ builder.Services.AddAuthentication(options =>
 });
 #endregion
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    });
+
 #region Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

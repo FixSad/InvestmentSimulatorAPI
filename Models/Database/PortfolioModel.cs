@@ -10,6 +10,6 @@ namespace InvestmentSimulatorAPI.Models.Database
         public float Quantity { get; set; }
 
         public int UserId { get; set; }
-        public UserModel User { get; set; } = null!;
+        public UserModel? User { get; set; }
     }
 }

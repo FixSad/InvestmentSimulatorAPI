@@ -13,6 +13,6 @@ namespace InvestmentSimulatorAPI.Models.Database
         public DateTime Timestamp { get; set; }
 
         public int UserId { get; set; }
-        public UserModel User { get; set; } = null!;
+        public UserModel? User { get; set; }
     }
 }
