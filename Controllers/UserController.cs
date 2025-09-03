@@ -1,13 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using InvestmentSimulatorAPI.Models;
-using InvestmentSimulatorAPI.Models.Database;
-using InvestmentSimulatorAPI.Services;
 using InvestmentSimulatorAPI.Repositories;
+using InvestmentSimulatorAPI.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace InvestmentSimulatorAPI.Controllers
@@ -42,13 +36,42 @@ namespace InvestmentSimulatorAPI.Controllers
                     return NotFound(new { message = "Пользователь не найден." });
                 }
 
-                // Возвращаем данные пользователя
-                return Ok(user);
+                UserDtoModel dto = new()
+                {
+                    Id = user.Id,
+                    Username = user.Username,
+                    Email = user.Email,
+                    Timestamp = user.Timestamp,
+                    IsAdmin = user.IsAdmin,
+                    Transactions = user.Transactions?.Select(t => new TransactionDtoModel
+                    {
+                        Id = t.Id,
+                        Symbol = t.Symbol,
+                        Type = t.Type,
+                        Quantity = t.Quantity,
+                        Price = t.Price,
+                        Timestamp = t.Timestamp
+                    }).ToList(),
+                    Portfolios = user.Portfolios?.Select(p => new PortfolioDtoModel
+                    {
+                        Id = p.Id,
+                        Symbol = p.Symbol,
+                        Quantity = p.Quantity
+                    }).ToList(),
+                    Favourites = user.Favourites?.Select(f => new FavouriteDtoModel
+                    {
+                        Id = f.Id,
+                        Symbol = f.Symbol
+                    }).ToList()
+                };
+
+                _logger.LogInformation($"{SUCCESS} Пользователь с id {userId} успешно получен");
+                return Ok(dto);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{ERROR} Ошибка при получении данных пользователя пользователя: {ex.Message}");
-                return BadRequest(new { description = "Ошибка при получении данных пользователя пользователя" });
+                _logger.LogError($"{ERROR} Ошибка при получении данных пользователя: {ex.Message}");
+                return BadRequest(new { description = "Ошибка при получении данных пользователя" });
             }
         }
     }
