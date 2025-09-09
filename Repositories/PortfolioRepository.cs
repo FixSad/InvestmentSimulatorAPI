@@ -40,5 +40,11 @@ namespace InvestmentSimulatorAPI.Repositories
         {
             return _dbContext.Portfolio;
         }
+
+        public async Task AddFunds(PortfolioModel entity, float funds)
+        {
+            entity.Quantity += funds;
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -4,6 +4,8 @@ using InvestmentSimulatorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InvestmentSimulatorAPI.Attributes;
+using InvestmentSimulatorAPI.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
@@ -54,6 +56,52 @@ namespace InvestmentSimulatorAPI.Controllers
                      {model.Symbol}, Quantity - {model.Quantity}: {ex.Message}"
                 );    
                 return BadRequest(new { description = $"Ошибка при создании портфолио" });
+            }
+        }
+
+        [HttpPost]
+        [Route("addFunds")]
+        public async Task<IActionResult> AddFundsPortfolio([FromBody] FundDtoModel funds)
+        {
+            try
+            {
+                var userId = GetCurrentUserId();
+
+                var portfolio = await _repository.GetAll().Where(a => a.Symbol == "BTCUSDT" && a.UserId == userId).FirstOrDefaultAsync();
+
+                if (!float.TryParse(funds.Funds, out float quantity))
+                {
+                    _logger.LogError($"{ERROR} Не удалось конвертировать значение funds {funds.Funds} в число");
+                    throw new InvalidOperationException("Не удалось конвертировать значение funds в число");
+                }
+
+                if (portfolio == null)
+                {
+                    await _repository.Create(new PortfolioModel
+                    {
+                        Symbol = "BTCUSDT",
+                        Quantity = quantity,
+                        UserId = userId
+                    });
+
+                    _logger.LogInformation(
+                        $@"{SUCCESS} Баланс успешно пополнен на {funds.Funds} USDT");
+
+                    return Ok(new { description = "Баланс успешно пополнен!" });
+                }
+
+                await _repository.AddFunds(portfolio, quantity);
+
+                _logger.LogInformation(
+                    $@"{SUCCESS} Баланс успешно пополнен на {funds.Funds} USDT");
+
+                return Ok(new { description = "Баланс успешно пополнен!" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    $@"{ERROR} Ошибка при пополнении баланса на {funds.Funds}: {ex}");
+                return BadRequest(new { description = $"Ошибка при пополнении баланса" });
             }
         }
 
