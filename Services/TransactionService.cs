@@ -23,14 +23,14 @@ namespace InvestmentSimulatorAPI.Services
 
                 if (findedTransaction is null)
                 {
-                    throw new KeyNotFoundException($"Транзакция с ID {id} не найдено");
+                    throw new KeyNotFoundException($"Транзакция с ID {id} не найдена");
                 }
 
                 return findedTransaction;
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"[ERR] Ошибка при получении транзакции с ID: {id}: {ex.Message}", ex);
+                throw new InvalidOperationException($"Ошибка при получении транзакции с ID: {id}: {ex.Message}", ex);
             }
         }
     }

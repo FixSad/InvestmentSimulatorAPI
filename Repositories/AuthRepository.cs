@@ -1,3 +1,4 @@
+using InvestmentSimulatorAPI.Exceptions;
 using InvestmentSimulatorAPI.Interfaces;
 using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Models.Database;
@@ -20,7 +21,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при создании пользователя: {ex}");
+                throw new DataModelException($"Ошибка при создании пользователя: {ex}", entity.Id);
             }
         }
 
@@ -33,7 +34,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при удалении пользователя: {ex}");
+                throw new DataModelException($"Ошибка при удалении пользователя: {ex}", entity.Id);
             }
         }
 

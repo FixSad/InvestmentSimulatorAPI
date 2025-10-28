@@ -8,19 +8,10 @@ namespace InvestmentSimulatorAPI.Controllers
 {
     [ApiController]
     [Route("api/user")]
-    public class UserController : BaseController
+    public class UserController : BaseController<AuthRepository>
     {
-        private readonly AuthRepository _repository;
-        private readonly ILogger<AuthController> _logger;
-        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
-        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
-        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
-
-        public UserController(AuthRepository repository, ILogger<AuthController> logger)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
+        public UserController(AuthRepository repository, ILogger<AuthController> logger) 
+            : base(repository, logger) { } 
 
         [HttpGet]
         [Authorize]

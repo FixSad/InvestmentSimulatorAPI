@@ -6,26 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using InvestmentSimulatorAPI.Attributes;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/favourite")]
     [ApiController]
-    public class FavouriteController : BaseController
+    public class FavouriteController : BaseController<FavouriteRepository>
     {
-        private FavouriteRepository _repository;
         private FavouriteService _service;
-        private readonly ILogger<FavouriteController> _logger;
-        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
-        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
-        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
 
         public FavouriteController(FavouriteRepository repository, FavouriteService service,
-                                   ILogger<FavouriteController> logger)
+                                   ILogger<FavouriteController> logger) : base (repository, logger)
         {
-            _repository = repository;
             _service = service;
-            _logger = logger;
         }
 
         [HttpPost]
@@ -44,6 +38,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 _logger.LogInformation($"{SUCCESS} Избранное {model.Symbol} успешно создано! ");
                 return Ok(new { description = "Избранное успешно создано" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {
@@ -73,6 +72,11 @@ namespace InvestmentSimulatorAPI.Controllers
                 _logger.LogInformation($"{SUCCESS} Избранное с ID {id} успешно удалено");
                 return Ok(new { description = "Избранное успешно удалено" });
             }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"{ERROR} Ошибка при удалении избранного с ID {id}: {ex.Message}");
@@ -96,6 +100,11 @@ namespace InvestmentSimulatorAPI.Controllers
                 _logger.LogInformation($"{SUCCESS} Список избранного пользователя {userId} успешно получен");
                 return Ok(favourites);
             }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"{ERROR} Ошибка при получении списка избранного: {ex.Message}");
@@ -117,6 +126,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 _logger.LogInformation($"{SUCCESS} Список избранного успешно получен");
                 return Ok(favourites);
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {

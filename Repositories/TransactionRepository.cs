@@ -1,6 +1,7 @@
 using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Interfaces;
 using InvestmentSimulatorAPI.Models.Database;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Repositories
 {
@@ -19,7 +20,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при создании транзакции: {ex}");
+                throw new DataModelException($"Ошибка при создании транзакции: {ex}", entity.Id);
             }
         }
 
@@ -32,7 +33,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при удалении транзакции: {ex}");
+                throw new DataModelException($"Ошибка при удалении транзакции: {ex}", entity.Id);
             }
         }
 

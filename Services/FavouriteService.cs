@@ -30,7 +30,7 @@ namespace InvestmentSimulatorAPI.Services
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"[ERR] Ошибка при получении избранного с ID: {id}: {ex.Message}", ex);
+                throw new InvalidOperationException($"Ошибка при получении избранного с ID: {id}: {ex.Message}", ex);
             }
         }
     }

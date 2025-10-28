@@ -6,26 +6,20 @@ using Microsoft.EntityFrameworkCore;
 using InvestmentSimulatorAPI.Attributes;
 using InvestmentSimulatorAPI.Models.DTO;
 using Microsoft.AspNetCore.Authorization;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/portfolio")]
     [ApiController]
-    public class PortfolioController : BaseController
+    public class PortfolioController : BaseController <PortfolioRepository>
     {
-        private PortfolioRepository _repository;
         private PortfolioService _service;
-        private readonly ILogger<PortfolioController> _logger;
-        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
-        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
-        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
 
         public PortfolioController(PortfolioRepository repository, PortfolioService service,
-                                   ILogger<PortfolioController> logger)
+                                   ILogger<PortfolioController> logger) : base(repository, logger)
         {
-            _repository = repository;
             _service = service;
-            _logger = logger;
         }
 
         [HttpPost]
@@ -90,12 +84,17 @@ namespace InvestmentSimulatorAPI.Controllers
                     return Ok(new { description = "Баланс успешно пополнен!" });
                 }
 
-                await _repository.AddFunds(portfolio, quantity);
+                await _service.AddFunds(portfolio, quantity);
 
                 _logger.LogInformation(
                     $@"{SUCCESS} Баланс успешно пополнен на {funds.Funds} USDT");
 
                 return Ok(new { description = "Баланс успешно пополнен!" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {
@@ -125,6 +124,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 _logger.LogInformation($"{SUCCESS} Портфолио с ID {id} успешно удалено");
                 return Ok(new { description = "Портфолио успешно удалено" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {

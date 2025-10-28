@@ -4,26 +4,20 @@ using InvestmentSimulatorAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InvestmentSimulatorAPI.Attributes;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [Route("api/transaction")]
     [ApiController]
-    public class TransactionController : BaseController
+    public class TransactionController : BaseController<TransactionRepository>
     {
-        private TransactionRepository _repository;
         private TransactionService _service;
-        private readonly ILogger<TransactionController> _logger;
-        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
-        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
-        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
 
         public TransactionController(TransactionRepository repository, TransactionService service,
-                                     ILogger<TransactionController> logger)
+                                     ILogger<TransactionController> logger) : base(repository, logger)
         {
-            _repository = repository;
             _service = service;
-            _logger = logger;
         }
 
         [HttpPost]
@@ -49,6 +43,11 @@ namespace InvestmentSimulatorAPI.Controllers
                     , Type - {model.Type}, Price - {model.Price} успешно создана"
                  );
                 return Ok(new { description = "Транзакция успешно создана" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {
@@ -80,6 +79,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 _logger.LogInformation($"{SUCCESS} Транзакция с ID {id} успешно удалена");
                 return Ok(new { description = "Транзакция успешно удалена" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {

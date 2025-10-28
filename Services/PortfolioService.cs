@@ -2,36 +2,40 @@ using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Models.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace InvestmentSimulatorAPI.Services
+namespace InvestmentSimulatorAPI.Services;
+public class PortfolioService
 {
-    public class PortfolioService
+    private ApplicationDbContext _context;
+
+    public PortfolioService(ApplicationDbContext context) => _context = context;
+
+    public async Task<PortfolioModel> GetPortfolioById(string id)
     {
-        private ApplicationDbContext _context;
-
-        public PortfolioService(ApplicationDbContext context) => _context = context;
-
-        public async Task<PortfolioModel> GetPortfolioById(string id)
+        try
         {
-            try
+            if (string.IsNullOrWhiteSpace(id))
             {
-                if (string.IsNullOrWhiteSpace(id))
-                {
-                    throw new ArgumentException("Идентификатор не может быть пустым.", nameof(id));
-                }
-
-                var findedPortfolio = await _context.Portfolio.SingleOrDefaultAsync(f => f.Id.ToString() == id);
-
-                if (findedPortfolio is null)
-                {
-                    throw new KeyNotFoundException($"Портфолио с ID {id} не найдено");
-                }
-
-                return findedPortfolio;
+                throw new ArgumentException("Идентификатор не может быть пустым.", nameof(id));
             }
-            catch (Exception ex)
+
+            var findedPortfolio = await _context.Portfolio.SingleOrDefaultAsync(f => f.Id.ToString() == id);
+
+            if (findedPortfolio is null)
             {
-                throw new InvalidOperationException($"[ERR] Ошибка при получении портфолио с ID: {id}: {ex.Message}", ex);
+                throw new KeyNotFoundException($"Портфолио с ID {id} не найдено");
             }
+
+            return findedPortfolio;
         }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Ошибка при получении портфолио с ID: {id}: {ex.Message}", ex);
+        }
+    }
+
+    public async Task AddFunds(PortfolioModel entity, float funds)
+    {
+        entity.Quantity += funds;
+        await _context.SaveChangesAsync();
     }
 }

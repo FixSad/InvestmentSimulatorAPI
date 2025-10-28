@@ -8,28 +8,22 @@ using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Models.Database;
 using InvestmentSimulatorAPI.Services;
 using InvestmentSimulatorAPI.Repositories;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Controllers
 {
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : BaseController
+    public class AuthController : BaseController<AuthRepository>
     {
         private readonly IConfiguration _configuration;
         private readonly AuthService _service;
-        private readonly AuthRepository _repository;
-        private readonly ILogger<AuthController> _logger;
-        private readonly string SUCCESS = $"[SUCCESS | {DateTime.UtcNow}]";
-        private readonly string ERROR = $"[ERROR | {DateTime.UtcNow}]";
-        private readonly string WARNING = $"[WARNING | {DateTime.UtcNow}]";
 
         public AuthController(IConfiguration configuration, AuthService service,
-                              AuthRepository repository, ILogger<AuthController> logger)
+                              AuthRepository repository, ILogger<AuthController> logger)  : base (repository, logger)
         {
             _configuration = configuration;
             _service = service;
-            _repository = repository;
-            _logger = logger;
         }
 
         [HttpPost]
@@ -60,6 +54,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 return Ok(new { message = "Пользователь успешно создан" });
             }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"{ERROR} Ошибка при создании пользователя: {ex.Message}");
@@ -84,6 +83,11 @@ namespace InvestmentSimulatorAPI.Controllers
 
                 _logger.LogInformation($"{SUCCESS} Успешный вход пользователя {model.Username} в учетную запись");
                 return Ok(new { token });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {

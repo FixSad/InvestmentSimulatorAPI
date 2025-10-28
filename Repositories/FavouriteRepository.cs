@@ -1,6 +1,7 @@
 using InvestmentSimulatorAPI.Models.Database;
 using InvestmentSimulatorAPI.Interfaces;
 using InvestmentSimulatorAPI.Models;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Repositories
 {
@@ -18,7 +19,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при создании избранного: {ex}");
+                throw new DataModelException($"Ошибка при создании избранного: {ex}", entity.Id);
             }
         }
 
@@ -31,7 +32,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при удалении избранного: {ex}");
+                throw new DataModelException($"Ошибка при удалении избранного: {ex}", entity.Id);
             }
         }
 

@@ -1,6 +1,7 @@
 using InvestmentSimulatorAPI.Models;
 using InvestmentSimulatorAPI.Interfaces;
 using InvestmentSimulatorAPI.Models.Database;
+using InvestmentSimulatorAPI.Exceptions;
 
 namespace InvestmentSimulatorAPI.Repositories
 {
@@ -19,7 +20,7 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при создании портфолио: {ex}");
+                throw new DataModelException($"Ошибка при создании портфолио: {ex}", entity.Id);
             }
         }
 
@@ -32,19 +33,13 @@ namespace InvestmentSimulatorAPI.Repositories
             }
             catch (Exception ex)
             {
-                throw new ApplicationException($"[ERR] Ошибка при удалении портфолио: {ex}");
+                throw new DataModelException($"Ошибка при удалении портфолио: {ex}", entity.Id);
             }
         }
 
         public IQueryable<PortfolioModel> GetAll()
         {
             return _dbContext.Portfolio;
-        }
-
-        public async Task AddFunds(PortfolioModel entity, float funds)
-        {
-            entity.Quantity += funds;
-            await _dbContext.SaveChangesAsync();
         }
     }
 }

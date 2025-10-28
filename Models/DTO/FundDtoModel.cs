@@ -1,6 +1,6 @@
 namespace InvestmentSimulatorAPI.Models.DTO
 {
-    public class Fund
+    public class FundDtoModel
     {
         public required string Funds { get; set; }
     } 
