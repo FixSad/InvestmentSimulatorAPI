@@ -40,15 +40,20 @@ namespace InvestmentSimulatorAPI.Controllers
                 _logger.LogInformation(
                     $@"{SUCCESS} Портфолио с данными Symbol -
                      {model.Symbol}, Quantity - {model.Quantity} успешно создано"
-                );                
-            return Ok(new { description = "Портфолио успешно создано" });
+                );
+                return Ok(new { description = "Портфолио успешно создано" });
+            }
+            catch (DataModelException ex)
+            {
+                _logger.LogError($"{ERROR} {ex.Message} Id {ex.Id}");
+                return BadRequest(new { description = ex.Message });
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     $@"{ERROR} Ошибка при создании портфолио с данными Symbol -
                      {model.Symbol}, Quantity - {model.Quantity}: {ex.Message}"
-                );    
+                );
                 return BadRequest(new { description = $"Ошибка при создании портфолио" });
             }
         }
