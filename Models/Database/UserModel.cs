@@ -2,17 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InvestmentSimulatorAPI.Models.Database
 {
-    public class UserModel
+    public class UserModel : IEntity
     {
         [Key]
         public int Id { get; set; }
 
-        public required string Username { get; set; }
+        public string Username { get; set; }
 
-        public required string PasswordHash { get; set; }
+        public string PasswordHash { get; set; }
 
         [EmailAddress]
-        public required string Email { get; set; }
+        public string Email { get; set; }
 
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 

@@ -2,13 +2,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InvestmentSimulatorAPI.Models.Database
 {
-    public class PortfolioModel
+    public class PortfolioModel : IEntity, IUserProduct
     {
         [Key]
         public int Id { get; set; }
-        public required string Symbol { get; set; }
-        public float Quantity { get; set; }
-
+        public string? Symbol { get; set; }
+        public float? Quantity { get; set; }
         public int UserId { get; set; }
         public UserModel? User { get; set; }
     }

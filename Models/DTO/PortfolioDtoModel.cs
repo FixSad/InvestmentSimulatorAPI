@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace InvestmentSimulatorAPI.Models.DTO
 {
-    public class PortfolioDtoModel
+    public class PortfolioDtoModel 
     {
-        public int Id { get; set; }
-        public required string Symbol { get; set; }
-        public float Quantity { get; set; }
+        [Required]
+        public string? Symbol { get; set; }
+        [Required]
+        public float? Quantity { get; set; }
     }
 }

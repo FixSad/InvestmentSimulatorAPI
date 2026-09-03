@@ -2,16 +2,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace InvestmentSimulatorAPI.Models.Database
 {
-    public class TransactionModel
+    public class TransactionModel : IEntity, IUserProduct
     {
         [Key]
         public int Id { get; set; }
-        public required string Symbol { get; set; }
-        public required string Type { get; set; }
+        public string Symbol { get; set; }
+        public string Type { get; set; }
         public float Quantity { get; set; }
         public float Price { get; set; }
         public DateTime Timestamp { get; set; }
-
         public int UserId { get; set; }
         public UserModel? User { get; set; }
     }
